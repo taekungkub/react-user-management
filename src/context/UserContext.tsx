@@ -7,6 +7,7 @@ interface UserContextType {
   deleteUser: (user: UserTy) => void;
   getUserById: (id: string) => void;
   user?: UserTy | undefined;
+  editUser: (user: UserTy) => void;
 }
 
 const uid = () => {
@@ -44,6 +45,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(user);
   };
 
+  async function editUser(user: UserTy) {
+    setUsers((prevUser) => prevUser.map((v) => (v.id === user.id ? user : v)));
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -51,6 +56,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         createUser,
         deleteUser,
         getUserById,
+        editUser,
         user,
       }}
     >

@@ -1,19 +1,19 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import Modal from "./Modal";
 import { UserTy } from "../types/user.type";
 import { useUser } from "../context/UserContext";
 import useDisclosure from "../hooks/useDisclosure";
-import { useNavigate } from "react-router-dom";
+import Modal from "./Modal";
 
 type FormData = {
   profile_picture: string;
   firstName: string;
   lastName: string;
   gender: string;
-  birthday: Date;
+  birthday: string;
 };
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2;
@@ -33,12 +33,12 @@ type Props = {
   user?: UserTy;
   type: "add" | "edit";
 };
-
 export default function FormUser({ user, type }: Props) {
   const navigate = useNavigate();
 
   const {
     register,
+    handleSubmit,
     getValues,
     reset,
     setValue,
@@ -46,7 +46,7 @@ export default function FormUser({ user, type }: Props) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-  const { createUser } = useUser();
+  const { createUser, editUser } = useUser();
   const { isOpen, open, close, toggle } = useDisclosure(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
@@ -69,25 +69,35 @@ export default function FormUser({ user, type }: Props) {
     }
   };
 
+  const onSubmit = (data: any) => {
+    open();
+  };
+
   const handleConfirm = () => {
     let newUser: UserTy = {
-      id: uid(),
+      id: type === "add" ? uid() : (user?.id as string),
       profile_picture: profileImage as string,
       firstname: getValues("firstName"),
       lastname: getValues("lastName"),
       gender: getValues("gender"),
       birthday: getValues("birthday").toString(),
     };
-    createUser(newUser);
+
+    if (type === "add") {
+      createUser(newUser);
+    } else if (type === "edit") {
+      editUser(newUser);
+    }
     navigate(`/users`);
   };
 
   useEffect(() => {
     if (user) {
+      setValue("profile_picture", user.profile_picture);
       setValue("firstName", user.firstname);
       setValue("lastName", user.lastname);
       setValue("gender", user.gender.toLocaleLowerCase());
-      setValue("birthday", new Date(user.birthday));
+      setValue("birthday", String(user.birthday));
     }
   }, [user]);
 
@@ -100,7 +110,7 @@ export default function FormUser({ user, type }: Props) {
   return (
     <>
       <div className="mt-8">
-        <form onSubmit={() => open()}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="col-span-1">
               <div className="flex justify-center">
@@ -205,7 +215,7 @@ export default function FormUser({ user, type }: Props) {
               Cancel
             </button>
             <button type="submit" className="btn btn-sm btn-primary">
-              Submit
+              {type === "add" ? "Add" : "Save"}
             </button>
           </div>
         </form>
@@ -213,16 +223,18 @@ export default function FormUser({ user, type }: Props) {
 
       <Modal open={isOpen}>
         <h3 className="font-bold text-lg">Are you sure?</h3>
-        <p className="py-4">Are you sure to add this?</p>
+        <p className="py-4">
+          Are you sure to {type === "add" ? "add" : "edit"} this?
+        </p>
         <div className="modal-action">
           <button className="btn btn-sm" onClick={() => close()}>
             Cancel
           </button>
           <button
-            className="btn btn-sm btn-primary"
+            className={`btn btn-sm btn-primary`}
             onClick={() => handleConfirm()}
           >
-            Confirm!
+            {type === "add" ? "Add" : "Save"}
           </button>
         </div>
       </Modal>

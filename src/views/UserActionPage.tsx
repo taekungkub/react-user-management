@@ -6,7 +6,7 @@ import { UserTy } from "../types/user.type";
 
 type FormTypeTy = "add" | "edit";
 
-export default function UserAddPage() {
+export default function UserActionPage() {
   const navigate = useNavigate();
   let { type, id } = useParams();
 
