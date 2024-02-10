@@ -28,7 +28,7 @@ export default function TableUser({ items, onEdit, onDelete }: Props) {
       </th>
       <td>{v.firstname}</td>
       <td>{v.lastname}</td>
-      <td>{v.gender}</td>
+      <td>{v.gender.charAt(0).toUpperCase()}</td>
       <td>{v.birthday}</td>
       <td className="flex justify-center">
         <div className="flex gap-3 items-center">
