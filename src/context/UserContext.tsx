@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 import { UserTy } from "../types/user.type";
+import toast from "react-hot-toast";
 
 interface UserContextType {
   users: UserTy[];
@@ -22,10 +23,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<UserTy[]>([
     {
       id: uid(),
-      profile_picture: "asd",
-      firstname: "Brice ",
+      profile_picture: "",
+      firstname: "Brice",
       lastname: "Swyre",
-      gender: "Male",
+      gender: "male",
       birthday: "2024-02-15",
     },
   ]);
@@ -34,10 +35,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const createUser = (newUser: UserTy) => {
     setUsers((oldArray) => [...oldArray, newUser]);
+    toast.success("Create  Successfully!");
   };
 
   const deleteUser = (user: UserTy) => {
     setUsers((prevUser) => prevUser.filter((v) => v.id != user.id));
+    toast.success("Delete Successfully!");
   };
 
   const getUserById = (id: string) => {
@@ -47,6 +50,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   async function editUser(user: UserTy) {
     setUsers((prevUser) => prevUser.map((v) => (v.id === user.id ? user : v)));
+    toast.success("Edit  Successfully!");
   }
 
   return (

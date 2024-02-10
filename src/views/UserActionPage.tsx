@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import FormUser from "../components/FormUser";
 import { useUser } from "../context/UserContext";
 import { UserTy } from "../types/user.type";
+import PageHeader from "../components/PageHeader";
 
 type FormTypeTy = "add" | "edit";
 
@@ -29,9 +30,9 @@ export default function UserActionPage() {
         </button>
 
         <div className="mt-4">
-          <div className="text-lg font-bold">
+          <PageHeader>
             {type === "add" ? "Create New User" : "Edit User " + id}
-          </div>
+          </PageHeader>
         </div>
 
         <FormUser type={type as FormTypeTy} user={user} />

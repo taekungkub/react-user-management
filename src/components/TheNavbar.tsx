@@ -1,8 +1,10 @@
 export default function TheNavbar() {
   return (
-    <div className="navbar bg-blue-400">
+    <div className="navbar bg-primary">
       <div className="navbar-start">
-        <a className="btn btn-ghost text-xl text-white">User Management</a>
+        <a className="btn btn-ghost text-xl text-white" href="/">
+          User Management
+        </a>
       </div>
     </div>
   );
