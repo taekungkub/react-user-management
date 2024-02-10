@@ -16,11 +16,13 @@ export default function Pagination({
   return (
     <>
       <div className="flex items-center gap-2">
-        <button className="join-item btn btn-sm" onClick={() => onPrevChange()}>
-          «
-        </button>
-
         <div className="join">
+          <button
+            className="join-item btn btn-sm"
+            onClick={() => onPrevChange()}
+          >
+            «
+          </button>
           {Array.from({ length: totalPage }).map((v, i) => (
             <button
               className={`join-item btn btn-sm ${
@@ -32,10 +34,13 @@ export default function Pagination({
               {i + 1}
             </button>
           ))}
+          <button
+            className="join-item btn btn-sm"
+            onClick={() => onNextChange()}
+          >
+            »
+          </button>
         </div>
-        <button className="join-item btn btn-sm" onClick={() => onNextChange()}>
-          »
-        </button>
       </div>
     </>
   );

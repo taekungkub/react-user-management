@@ -120,6 +120,7 @@ export default function FormUser({ user, type }: Props) {
                     id="firstName"
                     {...register("firstName")}
                     className="input input-bordered w-full"
+                    placeholder="Please enter First name"
                   />
                   {errors.firstName && (
                     <p className="text-red-500">{errors.firstName.message}</p>
@@ -134,6 +135,7 @@ export default function FormUser({ user, type }: Props) {
                     id="lastName"
                     {...register("lastName")}
                     className="input input-bordered w-full"
+                    placeholder="Please enter Last name"
                   />
                   {errors.lastName && (
                     <p className="text-red-500">{errors.lastName.message}</p>
