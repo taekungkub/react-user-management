@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import FormUser from "../components/FormUser";
 import { useUser } from "../context/UserContext";
@@ -10,14 +10,22 @@ type FormTypeTy = "add" | "edit";
 export default function UserActionPage() {
   const navigate = useNavigate();
   let { type, id } = useParams();
-
-  const { getUserById, user } = useUser();
+  const { getUserById, user, createUser, editUser } = useUser();
 
   useEffect(() => {
     if (id) {
       getUserById(id);
     }
   }, [id]);
+
+  function handleSubmit(user: UserTy) {
+    if (type === "add") {
+      createUser(user);
+    } else if (type === "edit") {
+      editUser(user);
+    }
+    navigate(`/users`);
+  }
 
   return (
     <>
@@ -35,7 +43,11 @@ export default function UserActionPage() {
           </PageHeader>
         </div>
 
-        <FormUser type={type as FormTypeTy} user={user} />
+        <FormUser
+          type={type as FormTypeTy}
+          user={user}
+          onUserSubmit={(user) => handleSubmit(user)}
+        />
       </div>
     </>
   );

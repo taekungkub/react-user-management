@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UserTy } from "../types/user.type";
-import { useUser } from "../context/UserContext";
 import useDisclosure from "../hooks/useDisclosure";
 import Modal from "./Modal";
 import AvatarProfile from "./AvatarProfile";
@@ -25,8 +24,9 @@ const uid = () => {
 type Props = {
   user?: UserTy;
   type: "add" | "edit";
+  onUserSubmit: (user: UserTy) => void;
 };
-export default function FormUser({ user, type }: Props) {
+export default function FormUser({ user, type, onUserSubmit }: Props) {
   const navigate = useNavigate();
 
   const {
@@ -39,31 +39,22 @@ export default function FormUser({ user, type }: Props) {
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
-  const { createUser, editUser } = useUser();
   const { isOpen, open, close, toggle } = useDisclosure(false);
 
   const { profileImage, setProfileImage, handleFileChange } = useFile();
 
-  const onSubmit = (data: any) => {
-    open();
-  };
+  const onSubmit = (data: any) => open();
 
   const handleConfirm = () => {
     let newUser: UserTy = {
-      id: type === "add" ? uid() : (user?.id as string),
-      profile_picture: profileImage as string,
+      id: type === "add" ? uid() : String(user?.id),
+      profile_picture: String(profileImage),
       firstname: getValues("firstName"),
       lastname: getValues("lastName"),
       gender: getValues("gender"),
       birthday: getValues("birthday").toString(),
     };
-
-    if (type === "add") {
-      createUser(newUser);
-    } else if (type === "edit") {
-      editUser(newUser);
-    }
-    navigate(`/users`);
+    onUserSubmit(newUser);
   };
 
   useEffect(() => {
