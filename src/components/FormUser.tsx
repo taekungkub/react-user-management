@@ -4,10 +4,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UserTy } from "../types/user.type";
+import useFile from "../hooks/useFile";
 import useDisclosure from "../hooks/useDisclosure";
 import Modal from "./Modal";
 import AvatarProfile from "./AvatarProfile";
-import useFile from "../hooks/useFile";
+import {
+  InputDateField,
+  InputField,
+  InputFileField,
+  SelectField,
+} from "./InputField";
 
 const schema = z.object({
   profile_picture: z.string().optional(),
@@ -28,7 +34,6 @@ type Props = {
 };
 export default function FormUser({ user, type, onUserSubmit }: Props) {
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -40,7 +45,6 @@ export default function FormUser({ user, type, onUserSubmit }: Props) {
     resolver: zodResolver(schema),
   });
   const { isOpen, open, close, toggle } = useDisclosure(false);
-
   const { profileImage, setProfileImage, handleFileChange } = useFile();
 
   const onSubmit = (data: any) => open();
@@ -69,15 +73,11 @@ export default function FormUser({ user, type, onUserSubmit }: Props) {
   }, [user]);
 
   useEffect(() => {
-    resetForm();
-  }, [type]);
-
-  function resetForm() {
     if (type === "add") {
       reset();
       setProfileImage("");
     }
-  }
+  }, [type]);
 
   return (
     <>
@@ -90,79 +90,44 @@ export default function FormUser({ user, type, onUserSubmit }: Props) {
                 onTrash={() => setProfileImage("")}
               />
               <div className="flex justify-center mt-4">
-                <input
-                  type="file"
-                  id="profilePicture"
+                <InputFileField
+                  fieldRegister={register("profile_picture")}
                   onChange={handleFileChange}
-                  className="file-input file-input-bordered w-full max-w-xs file-input-sm"
-                  accept="image/png, image/gif, image/jpeg"
+                  error={errors.profile_picture?.message}
                 />
               </div>
             </div>
-
             <div className="col-span-2 mb-4">
               <div className="grid grid-cols-1  sm:grid-cols-2 gap-3">
-                <div>
-                  <label htmlFor="firstName" className="block mb-1">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    {...register("firstName")}
-                    className="input input-bordered w-full"
-                    placeholder="Please enter First name"
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500">{errors.firstName.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="block mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    {...register("lastName")}
-                    className="input input-bordered w-full"
-                    placeholder="Please enter Last name"
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500">{errors.lastName.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="gender" className="block mb-1">
-                    Gender
-                  </label>
-                  <select
-                    id="gender"
-                    {...register("gender")}
-                    className="select select-bordered w-full "
-                  >
-                    <option value="">-- Please Select Gender --</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                  {errors.gender && (
-                    <p className="text-red-500">{errors.gender.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="birthday" className="block mb-1">
-                    Birthday
-                  </label>
-                  <input
-                    type="date"
-                    id="birthday"
-                    {...register("birthday")}
-                    className="input input-bordered w-full"
-                  />
-                  {errors.birthday && (
-                    <p className="text-red-500">{errors.birthday.message}</p>
-                  )}
-                </div>
+                <InputField
+                  labelText="First Name"
+                  placeholder="Please enter First name"
+                  fieldRegister={register("firstName")}
+                  error={errors.firstName?.message}
+                />
+                <InputField
+                  labelText="Last Name"
+                  placeholder="Please enter Last name"
+                  fieldRegister={register("lastName")}
+                  error={errors.lastName?.message}
+                />
+
+                <SelectField
+                  labelText="Gender"
+                  fieldRegister={register("gender")}
+                  error={errors.gender?.message}
+                >
+                  <SelectField.Option value="">
+                    -- Please Select Gender --
+                  </SelectField.Option>
+                  <SelectField.Option value="male">Male</SelectField.Option>
+                  <SelectField.Option value="female">Female</SelectField.Option>
+                </SelectField>
+                <InputDateField
+                  labelText="Birthday"
+                  fieldRegister={register("birthday")}
+                  error={errors.birthday?.message}
+                />
               </div>
             </div>
           </div>
